@@ -1,30 +1,49 @@
-from random import random, randint
+import argparse
 from typing import List
 from Profiles.users import users, get_users_from_topics
-from Profiles.topics import topics_keywords
+from Profiles.topics import get_all_topics, Topic
 
-def get_relevance(query: str, keywords: List[str]) -> float:
+from sentence_transformers import SentenceTransformer, util
+import torch
+
+model = SentenceTransformer('all-MiniLM-L6-v2')
+
+def get_relevance(query: str, topic: Topic) -> float:
     # Argumento adicional: Tipo de pesado. Estudiar como funciona el metodo deretrieval o rel metodo de la similaridad y codificar la query 'concatenando'
     # Probar. La lista, encodear con Bert y ver lo que devuelve. Puede ser una lista de embedings.
-    
-    return random()
 
-def topics_query(query: str, threshold = 0.5, top=3) -> List[tuple[str, float]]:
-    relevant_topcis = []
-    for topic, keywords in topics_keywords.items():
-        relevance = get_relevance(query, keywords)
+    embeddings = model.encode(topic.keywords, convert_to_tensor=True)
+    query_embedded = model.encode(query)
+
+    cosine_scores = util.cos_sim(query_embedded, embeddings)
+    
+    return torch.max(cosine_scores)
+
+def topics_query(query: str, threshold, top=3) -> List[tuple[str, float]]:
+    relevant_topcis = [('No relevant topics found', 0)]
+    for topic in get_all_topics(users):
+        relevance = get_relevance(query, topic)
         if relevance >= threshold:
             relevant_topcis.append((topic, relevance))
 
     top_topics, _ = zip(*sorted(relevant_topcis, key=lambda x: x[1], reverse=True)[:top])
+    print(top_topics)
     return top_topics
 
-def compatible_profiles(query: str) -> List[str]:
-    topics_infered = topics_query(query)
+def compatible_profiles(query: str, threshold: float) -> List[str]:
+    topics_infered = topics_query(query, threshold)
     return get_users_from_topics(topics_infered)
 
-new_doc = "Dua Lipa beats records"
+#if __name__ == '__main__':
+#    parser = argparse.ArgumentParser()
+#    parser.add_argument("query",
+#                help="Query that retrieves the intereseted users")
+#    parser.add_argument("-t", "--threshold", default=0.5,
+#                help="Threshold to consider a topci as relevant or not")
 
-print(compatible_profiles(new_doc))
+    # Parse arguments.
+#    args = parser.parse_args()
 
+#    print(compatible_profiles(args.query, float(args.threshold)))
 
+print(compatible_profiles("Test", 0.1))
