@@ -12,10 +12,9 @@ def get_relevance(query: str, topic: Topic) -> float:
     # Argumento adicional: Tipo de pesado. Estudiar como funciona el metodo deretrieval o rel metodo de la similaridad y codificar la query 'concatenando'
     # Probar. La lista, encodear con Bert y ver lo que devuelve. Puede ser una lista de embedings.
 
-    embeddings = model.encode(topic.keywords, convert_to_tensor=True)
     query_embedded = model.encode(query)
 
-    cosine_scores = util.cos_sim(query_embedded, embeddings)
+    cosine_scores = util.cos_sim(query_embedded, topic.keywords)
     
     return torch.max(cosine_scores)
 
@@ -38,7 +37,7 @@ def compatible_profiles(query: str, threshold: float) -> List[str]:
 #    parser = argparse.ArgumentParser()
 #    parser.add_argument("query",
 #                help="Query that retrieves the intereseted users")
-#    parser.add_argument("-t", "--threshold", default=0.5,
+#    parser.add_argument("-t", "--threshold", default=0.1,
 #                help="Threshold to consider a topci as relevant or not")
 
     # Parse arguments.
@@ -46,4 +45,4 @@ def compatible_profiles(query: str, threshold: float) -> List[str]:
 
 #    print(compatible_profiles(args.query, float(args.threshold)))
 
-print(compatible_profiles("Test", 0.1))
+print(compatible_profiles("The film adaptation of the novel Dune among the most awarded at the gala", 0.1))
