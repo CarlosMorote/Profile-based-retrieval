@@ -1,20 +1,27 @@
 import argparse
 from typing import List
-from Profiles.users import users, get_users_from_topics
-from Profiles.topics import get_all_topics, Topic
-
+from users import users, get_users_from_topics
+from topics import get_all_topics, Topic
 from sentence_transformers import SentenceTransformer, util
 import torch
+import numpy as np
 
 model = SentenceTransformer('all-MiniLM-L6-v2')
 
-def get_relevance(query: str, topic: Topic) -> float:
+SCORE_FUNC_MAP = dict(
+    dot = util.dot_score,
+    cos = util.cos_sim,
+    euclidean = lambda x, y: torch.tensor([1/(1+torch.nn.functional.pairwise_distance(x, k)) for k in y])
+)
+
+def get_relevance(query: str, topic: Topic, score_function: str, cat_k=False) -> float:
     # Argumento adicional: Tipo de pesado. Estudiar como funciona el metodo deretrieval o rel metodo de la similaridad y codificar la query 'concatenando'
     # Probar. La lista, encodear con Bert y ver lo que devuelve. Puede ser una lista de embedings.
 
     query_embedded = model.encode(query)
 
-    cosine_scores = util.cos_sim(query_embedded, topic.keywords)
+    keywords = ' '.join(topic.keywords) if cat_k else topic.keywords
+    cosine_scores = score_function(query_embedded, topic)
     
     return torch.max(cosine_scores)
 
