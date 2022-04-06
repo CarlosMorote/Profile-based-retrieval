@@ -67,7 +67,7 @@ class ProfileRetrieval:
 
         score_function = self.__load_similarity_measure(score_function) or self.similarity_measure
 
-        query_embedded = model.encode(query)
+        query_embedded = model.encode(query, convert_to_tensor=True)
 
         # keywords = ' '.join(topic.keywords) if cat_k else topic.keywords
         similarity_scores = score_function(query_embedded, topic.keywords)
