@@ -12,7 +12,7 @@
             "program": "${file}",
             "console": "integratedTerminal",
             "justMyCode": true,
-            "args": ["SerialTest", "Users.jsonl", "-s", "cos", "-thr", "0.4"]
+            "args": ["/20 news group/20_newsgroup.csv", "Testing", "Users.jsonl", "-s", "cos", "-thr", "0.4"]
         }
     ]
 }
