@@ -7,7 +7,7 @@ from datetime import datetime
 
 col_names = ['text','target']
 
-# python validation.py "/20 news group/20_newsgroup.csv" Validation Users.jsonl -s cos -thr 0.4 
+# python validation.py "/20 news group/20_newsgroup.csv" Validation Users.jsonl -s cos -thr 0.25 -p
 if __name__=="__main__":
 
     parser = argparse.ArgumentParser()
@@ -76,12 +76,12 @@ if __name__=="__main__":
     for index in range(max(df.index)+1):
 
         test_instance = df.iloc[index]
-        predicted_topics = profile_retrieval_search._topics_query(test_instance['text'], args.threshold)
+        predicted_topics = profile_retrieval_search._topics_query(test_instance['text'], args.threshold, verbose=0)
         actual_topic = test_instance['target']
 
         scores.append(int(any(prediction.name == actual_topic for prediction in predicted_topics)))
 
-        if not index % 1000:
+        if not index % 100:
             print(f"Queries validated: {index}")
 
     print(f"Accuracy: {mean(scores)}")

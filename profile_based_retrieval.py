@@ -74,7 +74,7 @@ class ProfileRetrieval:
         
         return torch.max(similarity_scores)
 
-    def _topics_query(self, query: str, threshold:float, print_top=6, **kwargs) -> List[tuple[str, float]]:
+    def _topics_query(self, query: str, threshold:float, print_top=6, verbose=1, **kwargs) -> List[tuple[str, float]]:
         per_topic_score = []
 
         for topic in self.topics.iterator():
@@ -82,7 +82,8 @@ class ProfileRetrieval:
             per_topic_score.append((topic, relevance))
 
         topics_sorted = sorted(per_topic_score, key=lambda x: x[1], reverse=True)
-        print(f'Top {min(len(topics_sorted), print_top)} per topic similarity scores: {", ".join(list(map(lambda x: f"({x[0]}:{float(x[1]):.4f})", topics_sorted[:print_top])))}')
+        if verbose:
+            print(f'Top {min(len(topics_sorted), print_top)} per topic similarity scores: {", ".join(list(map(lambda x: f"({x[0]}:{float(x[1]):.4f})", topics_sorted[:print_top])))}')
         
         top_topics_score = list(filter(lambda x: x[1]>= threshold, topics_sorted))
 
