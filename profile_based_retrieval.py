@@ -155,10 +155,7 @@ if __name__ == '__main__':
     profile_retrieval_search = ProfileRetrieval(args.serial_dir, args.users_filepath, args.similarity_measure, args.threshold, args.persist)
 
 
-    query = ""
-
-    while query != 'q':
-        query = input("Query (type q to quit): ").strip().lower()
+    while query := input("Query (type q to quit): ").strip().lower() != 'q':
         if query == 'q': break
         results = profile_retrieval_search.search(query)
         if results:
