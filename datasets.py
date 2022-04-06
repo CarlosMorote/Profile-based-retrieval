@@ -19,6 +19,9 @@ class UserDataset:
     def ids(self):
         return self.users.keys()
 
+    def get_users(self):
+        return self.users.values()
+
     def __setitem__(self, idx, topics):      
         new_user = User(idx, topics)
         self.users[idx] = new_user
@@ -73,26 +76,60 @@ class TopicDataset:
     def serial_dir(self, serial_dir:Union[str, Path]=None):
         if serial_dir: self.__serial_dir = Path(serial_dir)
 
+    @property
+    def names(self):
+        # The number of topics may change dinamically, we have to index the directory
+        # to know, at any moment, the number of topics available.
+        return [str(t.name).replace('.json', '')  for t in self.__topics_filepaths]
+
+    @property
+    def __topics_filepaths(self):
+        return self.serial_dir.glob('**/*.json')
 
     def _load_topics_to_mm(self):
         self.__topics = {str(topic.name).replace('.json', ''):Topic(from_json_filepath=topic) 
-                            for topic in self.serial_dir.glob('**/*.json')}
+                            for topic in self.__topics_filepaths}
 
     def __len__(self):
-        return len(list(self.serial_dir.glob('**/*.json')))
+        return len(list(self.__topics_filepaths))
 
     def __getitem__(self,name):
         return self.__topics[name] if self.__persist else \
             Topic(from_json_filepath=Path(self.serial_dir,name+'.json'))
 
+    def iterator(self):
+        if self.__persist:
+            return self.__topics.values()
+        else:   
+            return TopicIterator(list(self.__topics_filepaths))
+
+
+class TopicIterator:
+    def __init__(self, topics):
+        self.topics = topics
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        if not self.topics:
+            raise StopIteration
+        return Topic(from_json_filepath=self.topics.pop())
+
 
 if __name__ == '__main__':
     # Arg a el doc de topics
+    
     with open('topics.txt', 'r') as jsonl:
         topic_list = jsonl.readline().strip().split(';')
     # Generate dataset
     td = TopicDataset('SerialTest')
-    td.add_topics(*topic_list)
+    # td.add_topics(*topic_list)
+    # td.add_topics('Illness', 'Virus')
+    td.add_topics('Politics')
+    
+    for t in td.iterator():
+        print(t)
 
     # # Load dataset
     # td = TopicDataset('SerialTest')

@@ -27,6 +27,36 @@ class User():
         return any(self.has_topic(topic) for topic in topics)
 
 
+    def relevant_topics_found(self, topics: List[Topic]) -> set[Topic]:
+        """
+        Creates a set with the topics which the user is interested *and* the args argument
+        :param topics: List of `Topic` classes
+        :type topics: List of `Topic`
+        :return: Intersection of sets `self.interested_topics` and `args.topics`
+        :rtype: set
+        """
+        return set(self.interested_topics).intersection(set([t.name for t in topics]))
+
+
+def get_users_from_topics(topics_found: List[Topic]) -> List[tuple[User, Topic]]:
+    """
+    Retrieve the users that has interest in at least one of the topics provide as args
+    :param topics_found: List of `Topic` classes
+    :type topics_found: List of `Topic`
+    :return: Users that has interest in at least one of the topics, with the corresponding topic(s)
+    :rtype: List of tuples (User, set of topics)
+    """
+    resulting_users = []
+    for user in users:
+
+        # Get the relevant topics which the user is interested
+        inter = user.relevant_topics_found(topics_found)
+
+        # If the user has intereset in at least one of them added to the list
+        if len(inter):
+            resulting_users.append((user, inter))
+
+    return resulting_users
 
 # t_movies = Topic("Movies")
 # t_races = Topic("Races")

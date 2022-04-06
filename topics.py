@@ -19,14 +19,14 @@ class Topic:
     keywords_str: List[str]
 
     def _generate_keywords(self, word):
-
+        word = word.lower()
         synonyms = []
 
         for syn in wordnet.synsets(word):
             for l in syn.lemmas():
                 synonyms.append(re.sub(r"""[-_]""", " ", l.name()))
 
-        synonyms = list(set(synonyms))
+        synonyms = list(set(synonyms)|set([word]))
         embedding = model.encode(synonyms, convert_to_tensor=True)
 
         return synonyms, embedding
@@ -80,7 +80,7 @@ class Topic:
 
     @property
     def __embeddings_dir(self):
-        return Path(self.__json_filepath.parent, 'Embeddings')
+        return Path(self.__json_filepath.parent, 'embeddings')
 
     @property
     def __embeddings_filepath(self):
