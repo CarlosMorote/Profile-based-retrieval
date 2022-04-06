@@ -11,7 +11,7 @@
             "program": "${file}",
             "console": "integratedTerminal",
             "justMyCode": true,
-            "args": ["Serialize", "Users.jsonl", "-s", "cos", "-thr", "0.1"]
+            "args": ["SerialTest", "Users.jsonl", "-s", "cos", "-thr", "0.4"]
         }
     ]
 }

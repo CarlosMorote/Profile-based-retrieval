@@ -74,19 +74,31 @@ class ProfileRetrieval:
         
         return torch.max(similarity_scores)
 
-    def _topics_query(self, query: str, threshold:float, top=3, **kwargs) -> List[tuple[str, float]]:
-        relevant_topics = []
-        top_topics = []
+    def _topics_query(self, query: str, threshold:float, print_top=6, **kwargs) -> List[tuple[str, float]]:
+        # relevant_topics = []
+        per_topic_score = []
+        # top_topics = []
 
         for topic in self.topics.iterator():
             relevance = self._get_relevance(query, topic, **kwargs)
-            if relevance >= threshold:
-                relevant_topics.append((topic, relevance))
+            # if relevance >= threshold:
+            #     relevant_topics.append((topic, relevance))
+            per_topic_score.append((topic, relevance))
 
-        if relevant_topics:
-            top_topics, _ = zip(*sorted(relevant_topics, key=lambda x: x[1], reverse=True)[:top])
+        topics_sorted = sorted(per_topic_score, key=lambda x: x[1], reverse=True)
+        print(f'Top {min(len(topics_sorted), print_top)} per topic similarity scores: {", ".join(list(map(lambda x: f"({x[0]}:{float(x[1]):.4f})", topics_sorted[:print_top])))}')
+        
+        top_topics_score = list(filter(lambda x: x[1]>= threshold, topics_sorted))
 
-        return top_topics
+        if top_topics_score:
+            top_topics, _ = zip(*top_topics_score)
+            return top_topics
+        
+        return top_topics_score
+        # if relevant_topics:
+        #     top_topics, _ = zip(*topics_sorted)
+
+        # return top_topics
 
     def search(self, query: str, threshold:float=None, **kwargs) -> List[str]:
         if threshold: 
