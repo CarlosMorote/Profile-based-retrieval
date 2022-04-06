@@ -130,11 +130,10 @@ class ProfileRetrieval:
         return resulting_users
 
 
-# python profile_based_retrieval.py Serialize Users.jsonl -s cos -thr 0.1
+# python profile_based_retrieval.py Serialize Users.jsonl -s cos -thr 0.4
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    # parser.add_argument("query",
-    #             help="Query that retrieves the interested users")
+    
     parser.add_argument("serial_dir",
                 help="Directory where to dump/load from disk the serialized topics")
     parser.add_argument("users_filepath", help="Filepath to the file containing the list of users.")

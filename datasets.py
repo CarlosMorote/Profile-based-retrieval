@@ -4,6 +4,7 @@ from topics import Topic
 from pathlib import Path
 from users import User
 import utils
+import argparse
 
 class UserDataset:
     
@@ -120,34 +121,18 @@ class TopicIterator:
 if __name__ == '__main__':
     # Arg a el doc de topics
     
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument("folder_name",
+            help="Name of the folder that contains the serialized files")
+
+    args = parser.parse_args()
+
     with open('topics.txt', 'r') as jsonl:
         topic_list = jsonl.readline().strip().split(';')
     # Generate dataset
-    td = TopicDataset('SerialTest')
-    # td.add_topics(*topic_list)
-    # td.add_topics('Illness', 'Virus')
-    td.add_topics('Politics')
-    
+    td = TopicDataset(args.folder_name)
+    td.add_topics(*topic_list)
+
     for t in td.iterator():
         print(t)
-
-    # # Load dataset
-    # td = TopicDataset('SerialTest')
-    # movies = td['Movies']
-
-    # # Load dataset and keep it in mem.
-    # td2 = TopicDataset('SerialTest', persist=True)
-    # movies2 = td2['Movies']
-    # print('hi')
-
-    # ud = UserDataset('Users.jsonl')
-    # # Add user
-    # ud[51] = ["a", "b", "c"]
-    # ud[3] = ["a", "b", "c"]
-    # ud[54] = ["x", "y", "z"]
-    # # Length
-    # print(len(ud))
-    # # Get item
-    # a = ud[51]
-
-    # print('a')
