@@ -3,6 +3,7 @@ import argparse
 from profile_based_retrieval import ProfileRetrieval
 from datasets import TopicDataset
 from statistics import mean
+from math import sqrt
 from datetime import datetime
 
 col_names = ['text','target']
@@ -74,24 +75,28 @@ if __name__=="__main__":
     print("Dataframe loaded")
 
     print("Initiating Engine ...")
-    profile_retrieval_search = ProfileRetrieval(args.serial_dir, args.users_filepath, args.similarity_measure, args.threshold, args.persist)
+    profile_retrieval_search = ProfileRetrieval(args.serial_dir, args.users_filepath, args.similarity_measure, 0, args.persist)
     print("Engine loaded corectly")
 
     print("Permorming validation ...")
 
     scores = []
+    predictions = []
     start = datetime.now()
 
     for index in range(max(df.index)+1):
 
         test_instance = df.iloc[index]
-        predicted_topics = profile_retrieval_search._topics_query(test_instance['text'], args.threshold, verbose=0)
+        predicted_topics = profile_retrieval_search._topics_query(test_instance['text'], 0, verbose=0)
         actual_topic = test_instance['target']
 
-        scores.append(int(any(prediction.name == actual_topic for prediction in predicted_topics)))
+        filtered = list(filter(lambda x: x[0].name==actual_topic, predicted_topics))
+        predictions.append(float(filtered[0][1] if filtered else 0))
+        #scores.append(int(any(prediction.name == actual_topic for prediction in predicted_topics)))
+
 
         if not index % 100:
             print(f"Queries validated: {index}")
 
-    print(f"Accuracy: {mean(scores)}")
+    print(f"RMSE: {sqrt((sum(map(lambda x: x-1, predictions))**2)/len(predictions))}")
     print(f"Validation time: {datetime.now()-start}")

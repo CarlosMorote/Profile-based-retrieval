@@ -85,9 +85,9 @@ class ProfileRetrieval:
         
         top_topics_score = list(filter(lambda x: x[1]>= threshold, topics_sorted))
 
-        if top_topics_score:
-            top_topics, _ = zip(*top_topics_score)
-            return top_topics
+        #if top_topics_score:
+            #top_topics, _ = zip(*top_topics_score)
+            #return top_topics
         
         return top_topics_score
 
@@ -98,7 +98,7 @@ class ProfileRetrieval:
         else:
             threshold = self.threshold
 
-        topics_inferred = self._topics_query(query, threshold, **kwargs)
+        topics_inferred, _ = zip(*self._topics_query(query, threshold, **kwargs))
         
         print(f'Relevant topics in query: {topics_inferred}')
 

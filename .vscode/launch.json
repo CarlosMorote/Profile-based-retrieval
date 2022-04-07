@@ -12,7 +12,7 @@
             "program": "${file}",
             "console": "integratedTerminal",
             "justMyCode": true,
-            "args": ["/20 news group/20_newsgroup.csv", "Validation", "Users.jsonl", "-s", "cos", "-thr", "0.4", "-p"]
+            "args": ["/20 news group/20_newsgroup.csv", "validation_topics.txt", "Validation", "Users.jsonl", "-s", "cos", "-thr", "0", "-p"]
         }
     ]
 }
