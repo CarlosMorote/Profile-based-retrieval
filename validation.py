@@ -7,13 +7,15 @@ from datetime import datetime
 
 col_names = ['text','target']
 
-# python validation.py "/20 news group/20_newsgroup.csv" Validation Users.jsonl -s cos -thr 0.25 -p
+# python validation.py "/20 news group/20_newsgroup.csv" validation_topics.txt Validation Users.jsonl -s cos -thr 0.4 -p
 if __name__=="__main__":
 
     parser = argparse.ArgumentParser()
     
     parser.add_argument("file_name",
                 help="File name of the dataset to validate")
+    parser.add_argument("topics_file",
+                help="Name of the file that contains the list of topics")
     parser.add_argument("serial_dir",
                 help="Directory where to dump/load from disk the serialized topics")
     parser.add_argument("users_filepath", help="Filepath to the file containing the list of users.")
@@ -47,16 +49,23 @@ if __name__=="__main__":
         exit()
 
     further_step = False
-    with open('topics.txt', 'r') as f:
-        topic_list = f.readline().strip().split(';')
-    
-        for topic_df in df.target.unique():
-            if topic_df not in topic_list:
-                topic_list.append(topic_df)
-                further_step = True
+    topic_list = []
+
+    try:
+        with open(args.topics_file, 'r') as f:
+            topic_list = f.readline().strip().split(';')
+
+    except FileNotFoundError:
+        print("topcis file does not exist. Creating a new one...")
+        further_step = True
+
+    for topic_df in df.target.unique():
+        if topic_df not in topic_list:
+            topic_list.append(topic_df)
+            further_step = True
 
     if further_step:   
-        with open ('topics.txt', 'w') as f:
+        with open (args.topics_file, 'w') as f:
             f.write(';'.join(topic_list))
 
         td = TopicDataset(args.serial_dir)

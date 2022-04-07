@@ -118,17 +118,19 @@ class TopicIterator:
         return Topic(from_json_filepath=self.topics.pop())
 
 
+# python datasets.py topics.txt Serialize
 if __name__ == '__main__':
-    # Arg a el doc de topics
     
     parser = argparse.ArgumentParser()
 
+    parser.add_argument("topics_file",
+            help="Name of the file that contains the list of topics")
     parser.add_argument("folder_name",
             help="Name of the folder that contains the serialized files")
 
     args = parser.parse_args()
 
-    with open('topics.txt', 'r') as jsonl:
+    with open(args.topics_file, 'r') as jsonl:
         topic_list = jsonl.readline().strip().split(';')
     # Generate dataset
     td = TopicDataset(args.folder_name)

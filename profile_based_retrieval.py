@@ -4,6 +4,8 @@ from datasets import TopicDataset, UserDataset
 from users import User
 from topics import Topic
 from sentence_transformers import SentenceTransformer, util
+from packaging import version
+from platform import python_version
 import torch
 
 model = SentenceTransformer('all-MiniLM-L6-v2')
@@ -36,7 +38,7 @@ class ProfileRetrieval:
         return self.__similarity_measure
     
     @similarity_measure.setter
-    def similarity_measure(self, similarity_measure:str) -> None:
+    def similarity_measure(self, similarity_measure: str) -> None:
         self.__similarity_measure = self.__load_similarity_measure(similarity_measure)
 
     @property
@@ -44,11 +46,11 @@ class ProfileRetrieval:
         return self.__threshold
 
     @threshold.setter
-    def threshold(self, threshold) -> None:
+    def threshold(self, threshold: float) -> None:
         self.check_threshold_value(threshold)
         self.__threshold = threshold
 
-    def __load_similarity_measure(self, similarity_measure)->bool:
+    def __load_similarity_measure(self, similarity_measure: str)->bool:
         if similarity_measure and similarity_measure not in self.__SCORE_FUNC_MAP:
             raise ValueError(f'Invalid compare method. Try again with one of {list(self.__SCORE_FUNC_MAP.keys())}.')
         elif similarity_measure:
@@ -57,28 +59,24 @@ class ProfileRetrieval:
             # Explicit None return clause.
             return None
 
-    def check_threshold_value(self, threshold):
+    def check_threshold_value(self, threshold:float):
         if threshold<0 or threshold>1:
             raise ValueError('Wrong value for the search threshold, "{threshold}. Try to use a value between 0 and 1."')
 
-    def _get_relevance(self, query: str, topic: Topic, score_function:str=None) -> float:
-        # Argumento adicional: Tipo de pesado. Estudiar como funciona el metodo deretrieval o rel metodo de la similaridad y codificar la query 'concatenando'
-        # Probar. La lista, encodear con Bert y ver lo que devuelve. Puede ser una lista de embedings.
-
+    def _get_relevance(self, query: torch.Tensor, topic: Topic, score_function:str=None) -> float:
         score_function = self.__load_similarity_measure(score_function) or self.similarity_measure
 
-        query_embedded = model.encode(query, convert_to_tensor=True)
-
-        # keywords = ' '.join(topic.keywords) if cat_k else topic.keywords
-        similarity_scores = score_function(query_embedded, topic.keywords)
+        similarity_scores = score_function(query, topic.keywords)
         
         return torch.max(similarity_scores)
 
-    def _topics_query(self, query: str, threshold:float, print_top=6, verbose=1, **kwargs) -> List[tuple[str, float]]:
+    def _topics_query(self, query: str, threshold:float, print_top:int=6, verbose:int=1, **kwargs) -> List[tuple[str, float]]:
         per_topic_score = []
 
+        query_embedded = model.encode(query, convert_to_tensor=True)
+
         for topic in self.topics.iterator():
-            relevance = self._get_relevance(query, topic, **kwargs)
+            relevance = self._get_relevance(query_embedded, topic, **kwargs)
             per_topic_score.append((topic, relevance))
 
         topics_sorted = sorted(per_topic_score, key=lambda x: x[1], reverse=True)
@@ -133,6 +131,11 @@ class ProfileRetrieval:
 
 # python profile_based_retrieval.py Serialize Users.jsonl -s cos -thr 0.4
 if __name__ == '__main__':
+
+    if version.parse(python_version()) < version.parse('3.8.0'):
+        print("The min version of Python must be 3.8.0")
+        exit()
+
     parser = argparse.ArgumentParser()
     
     parser.add_argument("serial_dir",

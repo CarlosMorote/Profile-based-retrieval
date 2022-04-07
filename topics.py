@@ -4,12 +4,11 @@ from nltk.corpus import wordnet
 import re
 import json
 
-from torch import Tensor, embedding
-from sentence_transformers import SentenceTransformer, util
+from torch import Tensor
+from sentence_transformers import SentenceTransformer
 import torch
 import utils
 
-#PROBLEM HERE?
 model = SentenceTransformer('all-MiniLM-L6-v2')
 
 class Topic:
@@ -91,9 +90,3 @@ def get_all_topics(users: List):
     for user in users:
         topics += user.interested_topics
     return list(set(topics))
-
-
-
-if __name__ == '__main__':
-    # Generar serializable con los topics
-    pass

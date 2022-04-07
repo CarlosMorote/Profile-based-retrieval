@@ -1,4 +1,3 @@
-from pydoc_data.topics import topics
 from topics import Topic
 from typing import List
 
