@@ -8,11 +8,15 @@
 
 ---
 
+</br>
+
 ## Motivation
 
 We utilize Sentence-BERT to derive semantically meaningful sequence representations to measure semantic textual similarity between sentences and short texts by means of cosine-similarity. Based on the learned sentences embeddings, we propose an efficient semantic information retrieval system, providing search latencies suitable for real-time applications.
 
 ---
+
+</br>
 
 ## Run the code
 
@@ -75,6 +79,8 @@ A example to run the code might be:
 
 ---
 
+</br>
+
 ## Folder sctructure
 
     .
@@ -97,6 +103,8 @@ A example to run the code might be:
     └── validation.py
 
 ---
+
+</br>
 
 ## Code dependences
 
