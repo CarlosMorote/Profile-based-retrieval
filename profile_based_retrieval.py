@@ -84,10 +84,6 @@ class ProfileRetrieval:
             print(f'Top {min(len(topics_sorted), print_top)} per topic similarity scores: {", ".join(list(map(lambda x: f"({x[0]}:{float(x[1]):.4f})", topics_sorted[:print_top])))}')
         
         top_topics_score = list(filter(lambda x: x[1]>= threshold, topics_sorted))
-
-        #if top_topics_score:
-            #top_topics, _ = zip(*top_topics_score)
-            #return top_topics
         
         return top_topics_score
 
@@ -158,7 +154,7 @@ if __name__ == '__main__':
     profile_retrieval_search = ProfileRetrieval(args.serial_dir, args.users_filepath, args.similarity_measure, args.threshold, args.persist)
 
 
-    while query := input("Query (type q to quit): ").strip().lower() != 'q':
+    while (query := input("Query (type q to quit): ").strip().lower()) != 'q':
         if query == 'q': break
         results = profile_retrieval_search.search(query)
         if results:

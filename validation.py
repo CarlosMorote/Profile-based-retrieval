@@ -92,7 +92,6 @@ if __name__=="__main__":
 
         filtered = list(filter(lambda x: x[0].name==actual_topic, predicted_topics))
         predictions.append(float(filtered[0][1] if filtered else 0))
-        #scores.append(int(any(prediction.name == actual_topic for prediction in predicted_topics)))
 
 
         if not index % 100:
