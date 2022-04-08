@@ -94,7 +94,7 @@ class ProfileRetrieval:
         else:
             threshold = self.threshold
 
-        topics_inferred, _ = zip(*self._topics_query(query, threshold, **kwargs))
+        topics_inferred = aux[0] if len(aux:=list(zip(*self._topics_query(query, threshold, **kwargs)))) else []
         
         print(f'Relevant topics in query: {topics_inferred}')
 
