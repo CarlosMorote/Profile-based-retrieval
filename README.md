@@ -10,9 +10,13 @@
 
 </br>
 
-## Motivation
+## Introduction
 
-We utilize Sentence-BERT to derive semantically meaningful sequence representations to measure semantic textual similarity between sentences and short texts by means of cosine-similarity. Based on the learned sentences embeddings, we propose an efficient semantic information retrieval system, providing search latencies suitable for real-time applications.
+The increasingly overwhelming amount of available natural language motivates the pressing need to find efficient and reliable computational techniques capable of processing and analysing this type of data for the purpose of achieving human-like natural language understanding for a wide range of tasks, among which information retrieval (IR) is included. There is no single definition for information retrieval, but in short, it is a field concerned with finding relevant information of an unstructured nature that satisfies an information need from within large collections.
+
+Over the last decade, Natural Language Processing (NLP) has seen impressively fast growth, primarily favoured by the increase in computational power and the progress on self-supervised learning in computational linguistics. Particularly, recent research in the field has shown how general-purpose language representations are able to capture salient syntactic and semantic information about natural language, exhibiting an unprecedented level of natural language understanding and making it plausible, among other milestones, to encode and compare similarity between natural language information following a feature-based approach.  
+
+In this work, we propose the implementation of a simple semantic, general-purpose profile-based retrieval engine, aimed at delivering users with snippets of text matching their interests, providing search latencies suitable for real-time applications. For such, we utilize Sentence-BERT to derive semantically meaningful sequence representations to measure semantic textual similarity between sentences and short texts by means of similarity measures like cosine and dot product similarity, or Euclidean distance. Furthermore, we discuss why these novel techniques outperform lexically driven techniques such as the renowned TF-IDF statistic, as well as their suitability for IR engines in terms of performance, scalability and overall complexity.
 
 ---
 
@@ -38,11 +42,11 @@ The main script corresponds to `profile_based_retrieval.py`. This script initial
 
 A example to run the code might be: 
 
-    python profile_based_retrieval.py Serialize Users.jsonl -s cos -thr 0.4
+    python profile_based_retrieval.py Serialized Users.jsonl -s cos -thr 0.4
 
 </br>
 
-### 2. Generate the serialize objects
+### 2. Generate the serialized objects
 
 If we want to speed up the process we can serialize the objects and embedding. Thanks to that we do not require to compute the embedding every time we load the engine. To do that we execute the script `datasets.py`. The script takes as parameters:
  - **topics_file**: Name of the file that contains the list of topics
@@ -50,7 +54,7 @@ If we want to speed up the process we can serialize the objects and embedding. T
 
 A example to run the code might be:
 
-    python datasets.py topics.txt Serialize
+    python datasets.py topics.txt Serialized
 
 
 </br>
@@ -85,7 +89,7 @@ A example to run the code might be:
 
     .
     ├── README.md
-    ├── Serialize --> Folder that contains the serialized objects
+    ├── Serialized --> Folder that contains the serialized objects
     │   ├── "Topics.json"*
     │   └── embeddings
     │       └── "Topic-keyword.pt"*
